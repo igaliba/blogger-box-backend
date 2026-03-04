@@ -1,44 +1,58 @@
 package com.dauphine.blogger.services.impl;
 
+import com.dauphine.blogger.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger.models.Category;
+import com.dauphine.blogger.repositories.CategoryRepository;
 import com.dauphine.blogger.services.CategoryService;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private final List<Category> categories = new ArrayList<>();
+
+    private final CategoryRepository repository;
+
+    public CategoryServiceImpl(CategoryRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Category> getAll() {
-        return categories;
+        return repository.findAll();
     }
 
-    @Override
-    public Category getById(UUID id) {
-        return categories.stream().filter(c -> c.getId().equals(id)).findFirst().orElse(null);
-    }
 
     @Override
     public Category create(String name) {
         Category category = new Category(UUID.randomUUID(), name);
-        categories.add(category);
-        return category;
+        return repository.save(category);
     }
 
     @Override
-    public Category update(UUID id, String name) {
+    public Category updateName(UUID id, String name) throws CategoryNotFoundByIdException {
         Category category = getById(id);
-        if (category != null) {
-            category.setName(name);
+        if (category == null) {
+            return null;
         }
-        return category;
+        category.setName(name);
+        return repository.save(category);
     }
 
     @Override
     public boolean deleteById(UUID id) {
-        return categories.removeIf(c -> c.getId().equals(id));
+        repository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public List<Category> getAllLikeName(String name) {
+        return repository.findAllLikeName(name);
+    }
+    @Override
+    public Category getById(UUID id) throws CategoryNotFoundByIdException {
+        return repository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundByIdException(id)); //
     }
 }
