@@ -1,27 +1,29 @@
 package com.dauphine.blogger.models;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Post {
-    private Integer id;
+    private UUID id;
     private String title;
     private String content;
     private String author;
     private LocalDateTime createdAt;
+    private UUID categoryId; // Ajouté pour lier à une catégorie
 
     public Post() {}
 
-    public Post(Integer id, String title, String content, String author) {
+    public Post(UUID id, String title, String content, String author, UUID categoryId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
-        this.createdAt = LocalDateTime.now(); // On ajoute la date automatiquement
+        this.categoryId = categoryId;
+        this.createdAt = LocalDateTime.now();
     }
 
-    // Getters et Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getContent() { return content; }
@@ -30,4 +32,6 @@ public class Post {
     public void setAuthor(String author) { this.author = author; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public UUID getCategoryId() { return categoryId; }
+    public void setCategoryId(UUID categoryId) { this.categoryId = categoryId; }
 }

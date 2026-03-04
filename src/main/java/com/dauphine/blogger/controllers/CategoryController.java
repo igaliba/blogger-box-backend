@@ -1,43 +1,46 @@
 package com.dauphine.blogger.controllers;
 
 import com.dauphine.blogger.dto.CreationCategoryRequest;
-import com.dauphine.blogger.models.Category; // Importe ta classe Category
+import com.dauphine.blogger.dto.UpdateCategoryRequest;
+import com.dauphine.blogger.models.Category;
+import com.dauphine.blogger.services.CategoryService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/categories")
 public class CategoryController {
 
-    // On crée une liste vide qui fera office de "base de données" temporaire
-    private final List<Category> temporaryCategories = new ArrayList<>();
+    private final CategoryService service;
 
-    // Le constructeur initialise la liste avec quelques exemples
-    public CategoryController() {
-        temporaryCategories.add(new Category(1, "Ma première catégorie"));
-        temporaryCategories.add(new Category(2, "Ma deuxième catégorie"));
+    public CategoryController(CategoryService service) {
+        this.service = service;
     }
 
-    // On retourne maintenant la vraie liste au lieu d'un texte
     @GetMapping
     public List<Category> getAllCategories() {
-        return temporaryCategories;
+        return service.getAll();
     }
+
+    @GetMapping("/{id}")
+    public Category getCategoryById(@PathVariable UUID id) {
+        return service.getById(id);
+    }
+
     @PostMapping
     public Category createCategory(@RequestBody CreationCategoryRequest request) {
-        // On crée un nouvel ID (taille de la liste + 1)
-        Integer newId = temporaryCategories.size() + 1;
+        return service.create(request.getName());
+    }
 
-        // On crée la nouvelle catégorie à partir du nom reçu dans le DTO
-        Category newCategory = new Category(newId, request.getName());
+    @PutMapping("/{id}")
+    public Category updateCategory(@PathVariable UUID id, @RequestBody UpdateCategoryRequest request) {
+        return service.update(id, request.getName());
+    }
 
-        // On l'ajoute à notre liste temporaire
-        temporaryCategories.add(newCategory);
-
-        return newCategory;
+    @DeleteMapping("/{id}")
+    public void deleteCategory(@PathVariable UUID id) {
+        service.deleteById(id);
     }
 }
-
