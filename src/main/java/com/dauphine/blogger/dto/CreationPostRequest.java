@@ -5,8 +5,8 @@ import java.util.UUID;
 public class CreationPostRequest {
     private String title;
     private String content;
-    private String author;
     private UUID categoryId;
+    private String author;
 
     // Getters et Setters
     public String getTitle() { return title; }
